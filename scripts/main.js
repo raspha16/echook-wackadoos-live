@@ -1,12 +1,12 @@
-Vue.use(VueResource); //Required for GET requests to dweet.io
+Vue.use(VueResource); //Required for GET requests
 
 let app = new Vue({
   el: "#vue",
   data: {
-    thingName: "echook", //Dweet Thing name
+    carID: "Demo", //eChook ID
     buttonText: "Go!",
     status: "Idle",
-    dweet: { // This holds the latest data from dweet and is accessible in HTML with {{dweet.dataName}}
+    carData: { // This holds the latest data and is accessible in HTML with {{carData.dataName}}
       updated: 0,
       voltage: 0,
       voltageLow: 0,
@@ -26,38 +26,31 @@ let app = new Vue({
   },
   methods: {
     getData: function() {
-      // This function is called perioducally and asks dweet for the latest data for your thing Name
-      // It checks if the data is new, and if it is passes it to the updateData function.
-      // It also updates the "satus" text if errors occur.
+      // This function is called periodically and asks the server for the latest data for your ID
+      // It passes the data to the updateData function.
       var self = this;
-      this.$http.get(`https://dweet.io/get/latest/dweet/for/${this.thingName}`).then(function(response) {
+      this.$http.get(`https://data.echook.uk/api/get/${this.carID}`).then(function(response) {
         if (response.status == "200") {
           // console.log(response.data);
-          if (response.data.this === "succeeded" && response.data.with[0].created != this.dweet.updated) {
-            // If data request succeeded, and time stamp isn't the same as the current data
-            this.dweet.updated = response.data.with[0].created; //Update last updated time
-            this.status = `Getting Dweets from ${this.thingName}, updated: ${this.dweet.updated}`; //Update Status text
-            if (this.polling != null) { // after stop is presse previously requested data may still be coming in
-              this.updateData(response.data.with[0].content); //Call updateData function, passing new data from dweet data
-            }
-          } else if (response.data.this === "failed") { //if response failed, update status with reason
-            this.status = `Request failed with error: ${response.data.because}`
+          this.status = `Getting Data from ${this.carID}`; //Update Status text
+          if (this.polling != null) { // after stop is pressed previously requested data may still be coming in
+            this.updateData(response.data); //Call updateData function, passing new data
           }
         }
       })
     },
-    startDweet: function() {
+    startPolling: function() {
       // This function is called when you press the go/stop button.
       if (this.polling === null) {
-        // The polling variable holds the repeating function call to dweet.
+        // The polling variable holds the repeating function call.
         // if it is null, we're not requesting data, so the button needs to start requesting
-        this.status = `Getting Dweets from ${this.thingName}`; // Updates status with the thing name being used`
+        this.status = `Getting Data from ${this.carID}`; // Updates status with the ID being used`
         this.buttonText = "Stop"; //Changes button text to stop
         console.log(`Start Polling`);
         this.getData() // First request before poll interval, otherwise it waits the poll interval before first request
         this.polling = setInterval(() => {
           this.getData();
-        }, 5000); // Calls getData every 5000ms
+        }, 2000); // Calls getData every 2000ms
       } else {
         //Polling != null, therefore we have pressed the stop button
         console.log("Stop");
@@ -70,19 +63,16 @@ let app = new Vue({
 
     },
     updateData: function(data) {
-      if (data.Vt != undefined) this.dweet.voltage = data.Vt;
-      if (data.V1 != undefined) this.dweet.voltageLow = data.V1;
-      if (data.V1 != undefined) this.dweet.voltagehigh = data.Vt - data.V1;
-      if (data.A != undefined) this.dweet.current = data.A;
-      if (data.RPM != undefined) this.dweet.rpm = data.RPM;
-      if (data.Spd != undefined) this.dweet.speed = data.Spd;
-      if (data.Thrtl != undefined) this.dweet.throttle = data.Thrtl;
-      if (data.Tmp1 != undefined) this.dweet.t1 = data.Tmp1;
-      if (data.Tmp2 != undefined) this.dweet.t2 = data.Tmp2;
-      if (data.AH != undefined) this.dweet.ampHours = data.AH;
-      if (data.Lap != undefined) this.dweet.lap = data.Lap;
-      if (data.Gear != undefined) this.dweet.gear = data.Gear;
-      if (data.Brk != undefined) this.dweet.brake = data.Brk;
+      if (data.voltage != undefined) this.carData.voltage = Number(data.voltage).toFixed(2);
+      if (data.voltageLower != undefined) this.carData.voltageLow = Number(data.voltageLower).toFixed(2);
+      if (data.voltage != undefined && data.voltageLower != undefined) this.carData.voltageHigh = Number(data.voltage - data.voltageLower).toFixed(2);
+      if (data.current != undefined) this.carData.current = Number(data.current).toFixed(2);
+      if (data.rpm != undefined) this.carData.rpm = Number(data.rpm).toFixed(0);
+      if (data.speed != undefined) this.carData.speed = Number(data.speed).toFixed(2);
+      if (data.throttle != undefined) this.carData.throttle = Number(data.throttle).toFixed(0);
+      if (data.temp1 != undefined) this.carData.t1 = Number(data.temp1).toFixed(2);
+      if (data.temp2 != undefined) this.carData.t2 = Number(data.temp2).toFixed(2);
+      if (data.currLap != undefined) this.carData.lap = Number(data.currLap).toFixed(0);
     }
   },
   beforeDestroy() {

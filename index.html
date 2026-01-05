@@ -19,38 +19,38 @@
   <div id="vue">
     <!-- Any text within {{}} inside this 'vue' div will be replaced with the -->
     <!-- value of that variable in the Vue data object within main.js -->
-    <h1 style="padding-top:20px">eChook dweet data - demo page</h1>
+    <h1 style="padding-top:20px">eChook live data - demo page</h1>
     <br>
-    This is a very basic example web interface using Vue.js to fetch and show dweet.io data from an eChook, hosted for free on Github!
+    This is a very basic example web interface using Vue.js to fetch and show live data from an eChook, hosted for free on Github!
     If you want to create your own dashbard, feel free to fork this repository and make the site your own.
     <br>
     <br>
     For more information please go to the <a href="https://docs.echook.uk/telemetry-live-data/diy-web-dashboard">eChook documentation</a>.
     <br>
     <br>
-    Note: dweet.io is SLOW! Unfortunately it's now slower than when eChook started using it circa 2015. This site by default polls for new data every 5 seconds, but it will still occasionally rate limit.
+    To get your ID, follow the instructions <a href="https://docs.echook.uk/telemetry-live-data/node-red-integration">here</a>.
     <br>
     <br>
-    Enter your 'thing name' and hit go!
+    Enter your 'ID' and hit go!
     <div class="">
-      <input type="text" v-model="thingName" name="" value="" placeholder="Enter Dweet Thing Name">
-      <button type="button" v-on:click="startDweet" name="button">{{buttonText}}</button>
+      <input type="text" v-model="carID" name="" value="" placeholder="Enter ID">
+      <button type="button" v-on:click="startPolling" name="button">{{buttonText}}</button>
       <h3>Status: {{status}}</h3>
     </div>
     <div id="data-view" class="">
-      <p>Voltage: {{dweet.voltage}}V</p>
-      <p>Voltage Lower Battery: {{dweet.voltageLow}}V</p>
-      <p>Voltage Higher Battery: {{dweet.voltageHigh}}V</p>
-      <p>Current: {{dweet.current}}A</p>
-      <p>RPM: {{dweet.rpm}}RPM</p>
-      <p>Speed: {{dweet.speed}}m/s</p>
-      <p>Throttle: {{dweet.throttle}}%</p>
-      <p>Temp1: {{dweet.t1}}c</p>
-      <p>Temp2: {{dweet.t2}}c</p>
-      <p>Amp Hours Used: {{dweet.ampHours}}Ah</p>
-      <p>Current Lap: {{dweet.lap}}</p>
-      <p>Gear: {{dweet.gear}}</p>
-      <p>Brake: {{dweet.brake}}</p>
+      <p>Voltage: {{carData.voltage}}V</p>
+      <p>Voltage Lower Battery: {{carData.voltageLow}}V</p>
+      <p>Voltage Higher Battery: {{carData.voltageHigh}}V</p>
+      <p>Current: {{carData.current}}A</p>
+      <p>RPM: {{carData.rpm}}RPM</p>
+      <p>Speed: {{carData.speed}}m/s</p>
+      <p>Throttle: {{carData.throttle}}%</p>
+      <p>Temp1: {{carData.t1}}c</p>
+      <p>Temp2: {{carData.t2}}c</p>
+      <p>Amp Hours Used: {{carData.ampHours}}Ah</p>
+      <p>Current Lap: {{carData.lap}}</p>
+      <p>Gear: {{carData.gear}}</p>
+      <p>Brake: {{carData.brake}}</p>
     </div>
   </div>
 </body>
